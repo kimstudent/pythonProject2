@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Gallery</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" id="theme-style">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="profile">
+            <a href="{% url 'index' %}" style="color: white; text-decoration: none;">
+                <img src="{% static 'images/anime.png' %}" alt="Home">
+                <p>My Lab</p>
+                <span>Kim Yana</span>
+            </a>
+        </div>
+        <ul class="menu">
+            <li><a href="{% url 'index' %}" data-lang="Menu-1">Overview</a></li>
+            <li><a href="{% url 'devices' %}" data-lang="Menu-2">Devices</a></li>
+            <li><a href="{% url 'analytics' %}" data-lang="Menu-3">Analytics</a></li>
+            <li><a href="{% url 'rules' %}" data-lang="Menu-4">Rules</a></li>
+            <li><a href="{% url 'gallery' %}" class="active" data-lang="Menu-5">Gallery</a></li>
+            <li><a href="{% url 'history' %}" data-lang="Menu-6">History</a></li>
+            <li><a href="{% url 'settings' %}" data-lang="Menu-7">Settings</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <h1>Gallery</h1>
+
+        <!-- Камера -->
+        <div id="camera">
+            <video id="video" width="640" height="480" autoplay></video>
+            <button id="start-record">Start Recording</button>
+            <button id="stop-record" disabled>Stop Recording</button>
+            <canvas id="canvas" style="display: none;"></canvas>
+        </div>
+
+        <!-- Записанные видео -->
+        <h2>Recorded Videos</h2>
+        <button id="toggle-videos">Toggle Videos</button>
+        <div id="video-list" style="display: none;"></div>
+        <div id="video-player" style="display: none;">
+            <video id="selected-video" width="640" height="480" controls></video>
+            <button id="delete-video">Delete</button>
+            <button id="save-video">Save</button>
+            <button id="read-video">Read</button>
+        </div>
+    </div>
+
+    <script src="{% static 'js/themeToggle.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/Multilangs.js' %}"></script>
+    <script>
+        const video = document.getElementById('video');
+        const startRecordButton = document.getElementById('start-record');
+        const stopRecordButton = document.getElementById('stop-record');
+        const toggleVideosButton = document.getElementById('toggle-videos');
+        const videoListDiv = document.getElementById('video-list');
+        const videoPlayerDiv = document.getElementById('video-player');
+        const selectedVideo = document.getElementById('selected-video');
+        const deleteVideoButton = document.getElementById('delete-video');
+        const saveVideoButton = document.getElementById('save-video');
+        const readVideoButton = document.getElementById('read-video');
+        let mediaRecorder;
+        let recordedBlobs;
+        let currentVideoUrl = '';
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(error => {
+                console.error('Error accessing media devices.', error);
+            });
+
+        startRecordButton.addEventListener('click', () => {
+            recordedBlobs = [];
+            let options = { mimeType: 'video/webm;codecs=vp9' };
+            mediaRecorder = new MediaRecorder(video.srcObject, options);
+
+            mediaRecorder.onstop = (event) => {
+                const blob = new Blob(recordedBlobs, { type: 'video/webm' });
+                const formData = new FormData();
+                const uniqueFilename = `video_${Date.now()}.webm`;
+                formData.append('video', blob, uniqueFilename);
+
+                fetch("{% url 'save_video' %}", {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                }).then(response => response.json())
+                  .then(data => {
+                      if (data.status === 'success') {
+                          const videoUrl = data.video_url;
+                          const videoName = uniqueFilename;
+                          const videoLink = document.createElement('a');
+                          videoLink.href = '#';
+                          videoLink.textContent = videoName;
+                          videoLink.addEventListener('click', (e) => {
+                              e.preventDefault();
+                              loadVideo(videoUrl);
+                          });
+                          videoListDiv.appendChild(videoLink);
+                          videoListDiv.appendChild(document.createElement('br'));
+                      }
+                  });
+            };
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data && event.data.size > 0) {
+                    recordedBlobs.push(event.data);
+                }
+            };
+
+            mediaRecorder.start(10);
+            startRecordButton.disabled = true;
+            stopRecordButton.disabled = false;
+        });
+
+        stopRecordButton.addEventListener('click', () => {
+            mediaRecorder.stop();
+            startRecordButton.disabled = false;
+            stopRecordButton.disabled = true;
+        });
+
+        function toggleVisibility(elementId) {
+            const element = document.getElementById(elementId);
+            if (element.style.display === 'none' || element.style.display === '') {
+                element.style.display = 'block';
+            } else {
+                element.style.display = 'none';
+            }
+        }
+
+        function loadVideo(url) {
+            currentVideoUrl = url;
+            selectedVideo.src = url;
+            videoPlayerDiv.style.display = 'block';
+            selectedVideo.play();
+        }
+
+        function deleteVideo(deleteUrl) {
+            fetch(deleteUrl, {
+                method: 'POST',
+                body: JSON.stringify({ video_url: currentVideoUrl }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    loadVideos(); // Обновляем список видео
+                    videoPlayerDiv.style.display = 'none';
+                } else {
+                    console.error('Failed to delete video:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting video:', error);
+            });
+        }
+
+        function loadVideos() {
+            fetch("{% url 'load_videos' %}")
+                .then(response => response.json())
+                .then(data => {
+                    videoListDiv.innerHTML = '';
+                    data.videos.forEach(videoUrl => {
+                        const videoName = videoUrl.split('/').pop();
+                        const videoLink = document.createElement('a');
+                        videoLink.href = '#';
+                        videoLink.textContent = videoName;
+                        videoLink.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            loadVideo(videoUrl);
+                        });
+                        videoListDiv.appendChild(videoLink);
+                        videoListDiv.appendChild(document.createElement('br'));
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading videos:', error);
+                });
+        }
+
+        toggleVideosButton.addEventListener('click', () => {
+            toggleVisibility('video-list');
+            if (videoListDiv.style.display === 'block') {
+                loadVideos();
+            }
+        });
+
+        saveVideoButton.addEventListener('click', () => {
+            if (currentVideoUrl) {
+                const a = document.createElement('a');
+                a.href = currentVideoUrl;
+                a.download = currentVideoUrl.split('/').pop();
+                a.click();
+            }
+        });
+
+        readVideoButton.addEventListener('click', () => {
+            if (currentVideoUrl) {
+                const videoName = currentVideoUrl.split('/').pop();
+                const timestamp = videoName.split('_')[1].split('.')[0];
+                const date = new Date(parseInt(timestamp));
+                alert('Video created on: ' + date.toLocaleString());
+            }
+        });
+
+        deleteVideoButton.addEventListener('click', () => {
+            deleteVideo("{% url 'delete_video' %}");
+        });
+
+        // Обновляем список видео при загрузке страницы
+        window.onload = loadVideos;
+    </script>
+</body>
+</html>

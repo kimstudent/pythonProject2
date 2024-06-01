@@ -1,0 +1,272 @@
+/* Яна хелп */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+body, html {
+    height: 100%;
+    width: 100%;
+    font-size: 16px;
+    color: var(--text-color);
+    background: var(--bg-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+:root {
+    --bg-color: #f4f4f4;
+    --text-color: #333;
+    --sidebar-bg-color: #34495e;
+    --link-color: #2980b9;
+    --unit-bg-color: white;
+    --unit-text-color: #333;
+}
+
+[data-theme="dark"] {
+    --bg-color: #333;
+    --text-color: #f4f4f4;
+    --sidebar-bg-color: #2c3e50;
+    --link-color: #3498db;
+    --unit-bg-color: #444;
+    --unit-text-color: #f4f4f4;
+}
+
+/* Стили боковой панели */
+.sidebar {
+    width: 200px;
+    background-color: var(--sidebar-bg-color);
+    color: white;
+    height: 100vh;
+    padding: 20px;
+    position: fixed;
+    transition: background-color 0.3s;
+    overflow-y: auto;
+}
+
+.sidebar .profile img {
+    width: 80px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.sidebar .menu {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 0 0;
+}
+
+.sidebar .menu li {
+    padding: 10px 0;
+}
+
+.sidebar .menu li a {
+    color: var(--link-color);
+    text-decoration: none;
+    display: block;
+    transition: color 0.3s;
+}
+
+.sidebar .menu li a:hover, .sidebar .menu li a.active {
+    color: white;
+    background-color: var(--link-color);
+    padding: 10px;
+    border-radius: 4px;
+}
+
+/* Главная спасите меня боже я спать хочу */
+.main-content {
+    margin-left: 220px;
+    padding: 20px;
+}
+
+.media-section {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 10px;
+    padding: 0;
+}
+
+#cameraVideo {
+    flex: 1;
+    max-width: 75%;
+    height: auto;
+    margin-right: 0;
+    border: none;
+}
+
+.chart {
+    flex: 1;
+    max-width: 25%;
+    height: 250px;
+    margin-left: 0;
+}
+
+.info-section {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.unit {
+    background: var(--unit-bg-color);
+    color: var(--unit-text-color);
+    padding: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    flex: 1 1 200px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.unit img {
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+}
+
+.unit .label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.control-section {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.control-section button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 15px;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.control-section button:hover {
+    background-color: #2980b9;
+}
+
+/* Стили для галереи */
+#gallery {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.gallery-img {
+    width: 200px;
+    margin: 5px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.gallery-img:hover {
+    transform: scale(1.1);
+}
+
+/* Стили для превью-контейнера */
+#preview-container {
+    display: none;
+    position: fixed; 
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+button {
+    margin-top: 5px;
+    padding: 5px 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+#preview-date {
+    font-size: 16px;
+    color: #666;
+    padding: 10px 0;
+}
+
+/* Стр настроек */
+.settings-container {
+    background: var(--bg-color);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.settings-container h2 {
+    color: var(--link-color);
+}
+
+.setting {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+}
+
+.setting label {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.setting button, .setting input[type='checkbox'], .setting select {
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: white;
+    cursor: pointer;
+}
+
+.setting button:hover {
+    background-color: var(--link-color);
+    color: white;
+}
+
+.active {
+    background-color: #1abc9c;
+    color: white;
+}
+
+/* Иконки датчик бляяяяяя спасите */
+.icon-with-text {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+.icon-with-text span {
+    font-size: 16px;
+    color: var(--text-color);
+}

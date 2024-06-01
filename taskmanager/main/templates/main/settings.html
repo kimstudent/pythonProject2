@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Settings</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" id="theme-style">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="profile">
+            <a href="{% url 'index' %}" style="color: white; text-decoration: none;">
+                <img src="{% static 'images/anime.png' %}" alt="Home">
+                <p style="margin: 0;">My Lab</p>
+                <span>Kim Yana</span>
+            </a>
+        </div>
+        <ul class="menu">
+            <li><a href="{% url 'index' %}" data-lang="Menu-1">Overview</a></li>
+            <li><a href="{% url 'devices' %}" data-lang="Menu-2">Devices</a></li>
+            <li><a href="{% url 'analytics' %}" data-lang="Menu-3">Analytics</a></li>
+            <li><a href="{% url 'rules' %}" data-lang="Menu-4">Rules</a></li>
+            <li><a href="{% url 'gallery' %}" data-lang="Menu-5">Gallery</a></li>
+            <li><a href="{% url 'history' %}" data-lang="Menu-6">History</a></li>
+            <li><a href="{% url 'settings' %}" class="active" data-lang="Menu-7">Settings</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <h1 data-lang="Settings-Title">Settings</h1>
+        <div class="settings-container">
+            <section>
+                <h2 data-lang="Settings-UserPreferences">User Preferences</h2>
+                <div class="setting">
+                    <label for="language-select" data-lang="Settings-Language">Language:</label>
+                    <select id="language-select">
+                        <option value="en">English</option>
+                        <option value="ru" selected>Русский</option>
+                        <option value="kz">Қазақ</option>
+                    </select>
+                </div>
+                <div class="setting">
+                    <label data-lang="Settings-Theme">Theme:</label>
+                    <button id="toggle-theme" data-lang="Settings-ToggleTheme">Toggle Theme</button>
+                </div>
+            </section>
+            <section>
+                <h2 data-lang="Settings-Notifications">Notifications</h2>
+                <div class="setting">
+                    <label for="email-notifications" data-lang="Settings-EmailNotifications">Email Notifications:</label>
+                    <input type="checkbox" id="email-notifications" checked>
+                </div>
+                <div class="setting">
+                    <label for="sms-notifications" data-lang="Settings-SMSNotifications">SMS Notifications:</label>
+                    <input type="checkbox" id="sms-notifications">
+                </div>
+            </section>
+            <section>
+                <h2 data-lang="Settings-SecuritySettings">Security Settings</h2>
+                <div class="setting">
+                    <label for="change-password" data-lang="Settings-ChangePassword">Change Password:</label>
+                    <button id="change-password" data-lang="Settings-ChangePasswordBtn">Change Password</button>
+                </div>
+            </section>
+            <section>
+                <h2 data-lang="Settings-System">System</h2>
+                <div class="setting">
+                    <button id="factory-reset" data-lang="Settings-FactoryReset">Reset</button>
+                </div>
+            </section>
+        </div>
+    </div>
+    <script src="{% static 'js/themeToggle.js' %}"></script>
+    <script src="{% static 'js/Multilangs.js' %}"></script>
+    <script src="{% static 'js/resetSettings.js' %}"></script>
+</body>
+</html>

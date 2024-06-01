@@ -1,0 +1,133 @@
+/* Общие стили */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+body, html {
+    height: 100%;
+    width: 100%;
+    font-size: 16px;
+    color: var(--text-color);
+    background: var(--bg-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+:root {
+    --bg-color: #f4f4f4;
+    --text-color: #333;
+    --sidebar-bg-color: #34495e;
+    --link-color: #2980b9;
+}
+
+[data-theme="dark"] {
+    --bg-color: #333;
+    --text-color: #f4f4f4;
+    --sidebar-bg-color: #2c3e50;
+    --link-color: #3498db;
+}
+
+/* Стили боковой панели */
+.sidebar {
+    width: 200px;
+    background-color: var(--sidebar-bg-color);
+    color: white;
+    height: 100vh;
+    padding: 20px;
+    position: fixed;
+    transition: background-color 0.3s;
+    overflow-y: auto;
+}
+
+.sidebar .profile img {
+    width: 80px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.sidebar .menu {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 0 0;
+}
+
+.sidebar .menu li {
+    padding: 10px 0;
+}
+
+.sidebar .menu li a {
+    color: var(--link-color);
+    text-decoration: none;
+    display: block;
+    transition: color 0.3s;
+}
+
+.sidebar .menu li a:hover, .sidebar .menu li a.active {
+    color: white;
+    background-color: var(--link-color);
+    padding: 10px;
+    border-radius: 4px;
+}
+
+/* Стили основного контента */
+.main-content {
+    margin-left: 220px;
+    padding: 20px;
+}
+
+.rules-container section {
+    margin-bottom: 30px;
+}
+
+.rules-container h2 {
+    color: var(--link-color);
+    font-size: 24px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.rules-container h2::after {
+    content: '';
+    width: 50px;
+    height: 3px;
+    background-color: var(--link-color);
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+}
+
+.rules-container p, .rules-container ul {
+    margin-bottom: 20px;
+}
+
+.rules-container ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.rules-container li {
+    margin-bottom: 10px;
+    transition: transform 0.3s ease;
+}
+
+.rules-container li:hover {
+    transform: scale(1.05);
+}
+
+/* Анимации */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.rules-container section {
+    animation: fadeInUp 0.5s ease both;
+}

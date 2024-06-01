@@ -1,0 +1,35 @@
+<!-- я думаю на этой сттанице можно будет добавить описания всех датчиков. типа когда были последние вмешательства обнова или ремонт датчиков -->
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Devices</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+<div class="sidebar">
+    <div class="profile">
+        <a href="{% url 'index' %}" style="color: white; text-decoration: none;">
+            <img src="{% static 'images/anime.png' %}" alt="Home">
+            <p style="margin: 0;">My Lab</p>
+            <span>Kim Yana</span>
+        </a>
+    </div>
+    <ul class="menu">
+        <li><a href="{% url 'index' %}" data-lang="Menu-1">Overview</a></li>
+        <li><a href="{% url 'devices' %}" class="active" data-lang="Menu-2">Devices</a></li>
+        <li><a href="{% url 'analytics' %}" data-lang="Menu-3">Analytics</a></li>
+        <li><a href="{% url 'rules' %}" data-lang="Menu-4">Rules</a></li>
+        <li><a href="{% url 'gallery' %}" data-lang="Menu-5">Gallery</a></li>
+        <li><a href="{% url 'history' %}" data-lang="Menu-6">History</a></li>
+        <li><a href="{% url 'settings' %}" data-lang="Menu-7">Settings</a></li>
+    </ul>
+</div>
+<button id="toggle-theme">Toggle Theme</button>
+<script src="{% static 'js/script.js' %}"></script>
+<script src="{% static 'js/themeToggle.js' %}"></script>
+<script src="{% static 'js/Multilangs.js' %}"></script>
+</body>
+</html>

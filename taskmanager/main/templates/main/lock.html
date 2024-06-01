@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lock</title>
+</head>
+<body>
+    <h1>Lock Control</h1>
+    <div id="response"></div>
+    <form method="post" action="{% url 'lock' %}">
+    <label>Data to Send:</label><br>
+    <input type="text" id="data_to_send" name="data_to_send"><br><br>
+    <button type="submit">Send</button>
+    </form>
+
+
+    <script>
+        setInterval(function() {
+            fetch('')  // Здесь укажите URL для получения данных с ESP8266
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("response").innerHTML = "Response from ESP8266: " + data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }, 1000);  // Обновление данных каждую секунду (можно изменить интервал)
+    </script>
+</body>
+</html>

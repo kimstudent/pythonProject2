@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель управления умным домом</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="profile">
+            <a href="{% url 'index' %}" style="color: white; text-decoration: none;">
+                <img src="{% static 'images/anime.png' %}" alt="Home">
+                <p style="margin: 0;">My Lab</p>
+                <span>Kim Yana</span>
+            </a>
+        </div>
+        <ul class="menu">
+            <li><a href="{% url 'index' %}" class="active" data-lang="Menu-1">Overview</a></li>
+            <li><a href="{% url 'devices' %}" data-lang="Menu-2">Devices</a></li>
+            <li><a href="{% url 'analytics' %}" data-lang="Menu-3">Analytics</a></li>
+            <li><a href="{% url 'rules' %}" data-lang="Menu-4">Rules</a></li>
+            <li><a href="{% url 'gallery' %}" data-lang="Menu-5">Gallery</a></li>
+            <li><a href="{% url 'history' %}" data-lang="Menu-6">History</a></li>
+            <li><a href="{% url 'settings' %}" data-lang="Menu-7">Settings</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="date" id="currentDateTime"></div>
+            <div class="icon-with-text">
+                <a href="{% url 'settings' %}">
+                    <img src="{% static 'images/services.png' %}" alt="Settings" class="icon">
+                    <span data-lang="Settings-Text">Settings</span>
+                </a>
+            </div>
+            <div class="icon-with-text" id="more-button">
+                <img src="{% static 'images/more.png' %}" alt="More" class="icon">
+                <span data-lang="More-Text">More</span>
+            </div>
+            <div id="more-info" style="display: none;">
+                <p data-lang="More-Text-1"></p>
+                <p data-lang="More-Text-2"></p>
+                <p data-lang="More-Text-3"></p>
+                <p data-lang="More-Text-4"></p>
+            </div>
+        </div>
+        <div class="gallery" id="gallery"></div>
+        <div class="info-section">
+            <div class="unit">
+                <img src="{% static 'images/light.png' %}" alt="Light Sensor">
+                <span class="label" data-lang="LightSensor">Light Sensor:</span>
+                <span id="lightSensor">--</span>
+            </div>
+            <div class="unit">
+                <img src="{% static 'images/thermom.png' %}" alt="Temperature Sensor">
+                <span class="label" data-lang="TemperatureSensor">Temperature Sensor:</span>
+                <span id="temperatureSensor">--°C</span>
+            </div>
+            <div class="unit">
+                <img src="{% static 'images/humidity.png' %}" alt="Humidity Sensor">
+                <span class="label" data-lang="HumiditySensor">Humidity Sensor:</span>
+                <span id="humiditySensor">--%</span>
+            </div>
+            <div class="unit">
+                <img src="{% static 'images/motion.png' %}" alt="Motion Sensor">
+                <span class="label" data-lang="MotionSensor">Motion Sensor:</span>
+                <span id="motionSensor">--</span>
+            </div>
+            <div class="unit">
+                <img src="{% static 'images/gas.png' %}" alt="Gas Sensor">
+                <span class="label" data-lang="GasSensor">Gas Sensor:</span>
+                <span id="gasSensor">--</span>
+            </div>
+            <div class="unit">
+                <img src="{% static 'images/curtains.png' %}" alt="Curtain Status">
+                <span class="label" data-lang="CurtainStatus">Curtains:</span>
+                <span id="curtainStatus">Closed/Open</span>
+            </div>
+            <div class="unit">
+                <img src="{% static 'images/door.png' %}" alt="Door Status">
+                <span class="label" data-lang="DoorStatus">Door:</span>
+                <span id="doorStatus">Closed/Open</span>
+            </div>
+        </div>
+        <div class="control-section">
+            <button data-lang="Curtains">Close Curtains/Open Curtains</button>
+            <button data-lang="Door">Open Door/Close Door</button>
+            <button data-lang="Lights">Turn On Light/Turn Off Light</button>
+        </div>
+        <button id="toggle-theme">Toggle Theme</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'js/themeToggle.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/toggleMoreInfo.js' %}"></script>
+    <script src="{% static 'js/Multilangs.js' %}"></script>
+</body>
+</html>

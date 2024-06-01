@@ -1,0 +1,135 @@
+// тута короче чисто на странице анализа. эти херни отвечают за диаграммы. но тут надо поиграть и настроить датчики
+
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleThemeBtn = document.getElementById('toggle-theme');
+
+    function setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+    }
+
+    function applyStoredTheme() {
+        const storedTheme = localStorage.getItem('theme') || 'light';
+        setTheme(storedTheme);
+    }
+
+    toggleThemeBtn.addEventListener('click', function() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        setTheme(newTheme);
+    });
+
+    applyStoredTheme();
+});
+
+Number.prototype.comma_formatter = function() {
+    return this.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+}
+
+let chartData = function(){
+    return {
+        date: 'today',
+        options: [
+            {
+                label: 'Today',
+                value: 'today',
+            },
+            {
+                label: 'Last 7 Days',
+                value: '7days',
+            },
+            {
+                label: 'Last 30 Days',
+                value: '30days',
+            },
+            {
+                label: 'Last 6 Months',
+                value: '6months',
+            },
+            {
+                label: 'This Year',
+                value: 'year',
+            },
+        ],
+        showDropdown: false,
+        selectedOption: 0,
+        selectOption: function(index){
+            this.selectedOption = index;
+            this.date = this.options[index].value;
+            this.renderChart();
+        },
+        data: null,
+        fetch: function(){
+            fetch('https://cdn.jsdelivr.net/gh/swindon/fake-api@master/tailwindAlpineJsChartJsEx1.json')
+                .then(res => res.json())
+                .then(res => {
+                    this.data = res.dates;
+                    this.renderChart();
+                })
+        },
+        renderChart: function(){
+            let c = false;
+
+            Chart.helpers.each(Chart.instances, function(instance) {
+                if (instance.chart.canvas.id == 'chart') {
+                    c = instance;
+                }
+            });
+
+            if(c) {
+                c.destroy();
+            }
+
+            let ctx = document.getElementById('chart').getContext('2d');
+
+            let chart = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: this.data[this.date].data.labels,
+                    datasets: [
+                        {
+                            label: "Income",
+                            backgroundColor: "rgba(102, 126, 234, 0.25)",
+                            borderColor: "rgba(102, 126, 234, 1)",
+                            pointBackgroundColor: "rgba(102, 126, 234, 1)",
+                            data: this.data[this.date].data.income,
+                        },
+                        {
+                            label: "Expenses",
+                            backgroundColor: "rgba(237, 100, 166, 0.25)",
+                            borderColor: "rgba(237, 100, 166, 1)",
+                            pointBackgroundColor: "rgba(237, 100, 166, 1)",
+                            data: this.data[this.date].data.expenses,
+                        },
+                    ],
+                },
+                layout: {
+                    padding: {
+                        right: 10
+                    }
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            gridLines: {
+                                display: false
+                            },
+                            ticks: {
+                                callback: function(value,index,array) {
+                                    return value > 1000 ? ((value < 1000000) ? value/1000 + 'K' : value/1000000 + 'M') : value;
+                                }
+                            }
+                        }]
+                    }
+                }
+            });
+        }
+    }
+}
+
+
+
+
+
+
+
