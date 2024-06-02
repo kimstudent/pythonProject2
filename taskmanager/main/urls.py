@@ -19,6 +19,7 @@ urlpatterns = [
     path('save_video/', views.save_video, name='save_video'),
     path('load_videos/', views.load_videos, name='load_videos'),
     path('delete_video/', views.delete_video, name='delete_video'),
+    path('webhook', views.webhook_handler, name='webhook_handler'),
 ]
 
 

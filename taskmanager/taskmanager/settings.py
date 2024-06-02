@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-ja__(1wmbhx1%m3=rxos6y(bw!%izr&jqy4_&^pgsa4&c8+oel
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -121,6 +121,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TOKEN = '7109546481:AAEUVjOINwCbZ9hZENr1QIRvwIb6rG2dHEY'
 PROXY_URL = 'https://web.telegram.org/k/#@LPS1bot'
 
+WEBHOOK_URL = 'https://e7cc-2-135-32-182.ngrok-free.app/webhook'
 
 
 

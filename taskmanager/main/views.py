@@ -130,8 +130,25 @@ def stop_recording(request):
 
 
 from telegram import Bot
+from telegram import Update
+from telegram.ext import Application
 
 def send_message_to_telegram(request):
     bot = Bot(token=settings.TOKEN)
     bot.send_message(chat_id='Ваш чат ID', text='Привет из Django view!')
     return HttpResponse("Сообщение отправлено!")
+
+@csrf_exempt
+def webhook_handler(request):
+    if request.method == 'POST':
+        try:
+            # Парсим данные из запроса
+            update = Update.de_json(request.body.decode('utf-8'))
+            # Получаем экземпляр приложения Telegram
+            application = Application.get_instance()
+            # Обрабатываем обновление
+            application.process_update(update)
+            return JsonResponse({'status': 'ok'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'invalid request method'})

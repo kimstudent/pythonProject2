@@ -2,7 +2,8 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-import subprocess
+import asyncio
+from start_bot import main as bot_main
 
 def main():
     """Run administrative tasks."""
@@ -16,14 +17,8 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
 
-    # Запуск Telegram бота в отдельном процессе
-    bot_process = subprocess.Popen([sys.executable, 'start_bot.py'])
-
-    try:
-        execute_from_command_line(sys.argv)
-    finally:
-        # Остановка процесса бота при завершении работы Django сервера
-        bot_process.terminate()
+    asyncio.run(bot_main())
+    execute_from_command_line(sys.argv)
 
 if __name__ == '__main__':
     main()
