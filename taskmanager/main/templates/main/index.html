@@ -18,7 +18,6 @@
         </div>
         <ul class="menu">
             <li><a href="{% url 'index' %}" class="active" data-lang="Menu-1">Overview</a></li>
-            <li><a href="{% url 'devices' %}" data-lang="Menu-2">Devices</a></li>
             <li><a href="{% url 'analytics' %}" data-lang="Menu-3">Analytics</a></li>
             <li><a href="{% url 'rules' %}" data-lang="Menu-4">Rules</a></li>
             <li><a href="{% url 'gallery' %}" data-lang="Menu-5">Gallery</a></li>
@@ -86,7 +85,7 @@
         </div>
         <div class="control-section">
             <button data-lang="Curtains">Close Curtains/Open Curtains</button>
-            <button data-lang="Door">Open Door/Close Door</button>
+            <button data-lang="Door" onclick="toggleDoor()">Open Door/Close Door</button>
             <button data-lang="Lights">Turn On Light/Turn Off Light</button>
         </div>
         <button id="toggle-theme">Toggle Theme</button>
@@ -96,5 +95,23 @@
     <script src="{% static 'js/script.js' %}"></script>
     <script src="{% static 'js/toggleMoreInfo.js' %}"></script>
     <script src="{% static 'js/Multilangs.js' %}"></script>
+    <script>
+        function toggleDoor() {
+            fetch('/toggle_door', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('doorStatus').innerText = data.response;
+                }
+            });
+        }
+    </script>
 </body>
 </html>

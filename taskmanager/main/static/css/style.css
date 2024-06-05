@@ -17,7 +17,7 @@ body, html {
 
 :root {
     --bg-color: #f4f4f4;
-    --text-color: #333;
+    --text-color: #ff69b4; /* розовый */
     --sidebar-bg-color: #34495e;
     --link-color: #2980b9;
     --unit-bg-color: white;
@@ -26,12 +26,13 @@ body, html {
 
 [data-theme="dark"] {
     --bg-color: #333;
-    --text-color: #f4f4f4;
+    --text-color: #ff69b4; /* розовый */
     --sidebar-bg-color: #2c3e50;
     --link-color: #3498db;
     --unit-bg-color: #444;
-    --unit-text-color: #f4f4f4;
+    --unit-text-color: #ff69b4; /* розовый */
 }
+
 
 /* Стили боковой панели */
 .sidebar {

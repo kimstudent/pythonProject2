@@ -1,9 +1,11 @@
-#!/usr/bin/env python
-"""Django's command-line utility for administrative tasks."""
 import os
 import sys
+from multiprocessing import Process
 import asyncio
-from start_bot import main as bot_main
+
+# def start_bot():
+#     from start_bot import main as bot_main
+#     asyncio.run(bot_main())
 
 def main():
     """Run administrative tasks."""
@@ -17,7 +19,9 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
 
-    asyncio.run(bot_main())
+    # bot_process = Process(target=start_bot)
+    # bot_process.start()
+
     execute_from_command_line(sys.argv)
 
 if __name__ == '__main__':

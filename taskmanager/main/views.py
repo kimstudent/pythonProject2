@@ -12,11 +12,9 @@ from django.core.files.storage import FileSystemStorage
 
 from .models import Profile, Device, Message, Video, Photo
 
-ESP_IP = '192.168.162.224'
-ESP_PORT = 13245
 
-# Определение пути для хранения видео
-VIDEOS_DIR = os.path.join(settings.BASE_DIR, 'media/videos')
+
+VIDEOS_DIR = os.path.join('media', 'videos')
 os.makedirs(VIDEOS_DIR, exist_ok=True)
 
 def gallery(request):
@@ -26,13 +24,14 @@ def gallery(request):
 def save_video(request):
     if request.method == 'POST':
         video = request.FILES['video']
-        unique_filename = f'video_{int(time.time())}.webm'
+        current_time = time.strftime('%Y-%m-%d_%H-%M-%S')
+        unique_filename = f'video_{current_time}.webm'
         video_path = os.path.join(VIDEOS_DIR, unique_filename)
         with open(video_path, 'wb') as f:
             for chunk in video.chunks():
                 f.write(chunk)
         video_url = f'/media/videos/{unique_filename}'
-        return JsonResponse({'status': 'success', 'video_url': video_url})
+        return JsonResponse({'status': 'success', 'video_url': video_url, 'timestamp': current_time})
     return JsonResponse({'status': 'failed'})
 
 def load_videos(request):
@@ -40,28 +39,31 @@ def load_videos(request):
         videos = []
         if os.path.exists(VIDEOS_DIR):
             for video_name in os.listdir(VIDEOS_DIR):
+                video_path = os.path.join(VIDEOS_DIR, video_name)
+                timestamp = os.path.getctime(video_path)
                 video_url = f'/media/videos/{video_name}'
-                videos.append(video_url)
+                videos.append({'url': video_url, 'timestamp': time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))})
         return JsonResponse({'videos': videos})
+
 
 @csrf_exempt
 def delete_video(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         video_url = data.get('video_url')
-        video_path = os.path.join(VIDEOS_DIR, os.path.basename(video_url))  # Используем VIDEOS_DIR для определения полного пути
+        video_path = os.path.join('media', video_url.replace('/media/', ''))
         if os.path.exists(video_path):
             os.remove(video_path)
             return JsonResponse({'status': 'success'})
         return JsonResponse({'status': 'failed', 'error': 'Video not found'})
     return JsonResponse({'status': 'failed', 'error': 'Invalid request method'})
 
+
 def index(request):
     profiles = Profile.objects.all()
     return render(request, 'main/index.html', {'profiles': profiles})
 
-def devices(request):
-    return render(request, 'main/devices.html')
+
 
 def analytics(request):
     return render(request, 'main/analytics.html')
@@ -75,6 +77,8 @@ def history(request):
 def settings(request):
     return render(request, 'main/settings.html')
 
+
+
 def lock(request):
     if request.method == 'POST':
         data_to_send = request.POST.get('data_to_send')
@@ -82,6 +86,18 @@ def lock(request):
         response_from_esp = receive_data_from_esp()
         return HttpResponse("Data sent to ESP8266: " + data_to_send + "<br>" + "Response from ESP8266: " + response_from_esp)
     return render(request, 'main/lock.html')
+
+
+ESP_IP = '192.168.1.71'  # Замените на IP вашего ESP8266
+ESP_PORT = 13245
+
+@csrf_exempt
+def toggle_door(request):
+    if request.method == 'POST':
+        send_data_to_esp('toggle')
+        response_from_esp = receive_data_from_esp()
+        return JsonResponse({'status': 'success', 'response': response_from_esp})
+    return JsonResponse({'status': 'failed', 'error': 'Invalid request method'})
 
 def send_data_to_esp(data):
     try:

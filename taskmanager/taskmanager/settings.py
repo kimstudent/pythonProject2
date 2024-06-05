@@ -104,7 +104,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'main/static')]
 
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
@@ -123,5 +123,5 @@ PROXY_URL = 'https://web.telegram.org/k/#@LPS1bot'
 
 WEBHOOK_URL = 'https://e7cc-2-135-32-182.ngrok-free.app/webhook'
 
-
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

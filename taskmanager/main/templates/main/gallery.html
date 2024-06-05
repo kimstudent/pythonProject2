@@ -17,7 +17,6 @@
         </div>
         <ul class="menu">
             <li><a href="{% url 'index' %}" data-lang="Menu-1">Overview</a></li>
-            <li><a href="{% url 'devices' %}" data-lang="Menu-2">Devices</a></li>
             <li><a href="{% url 'analytics' %}" data-lang="Menu-3">Analytics</a></li>
             <li><a href="{% url 'rules' %}" data-lang="Menu-4">Rules</a></li>
             <li><a href="{% url 'gallery' %}" class="active" data-lang="Menu-5">Gallery</a></li>
@@ -43,7 +42,7 @@
         <div id="video-player" style="display: none;">
             <video id="selected-video" width="640" height="480" controls></video>
             <button id="delete-video">Delete</button>
-            <button id="save-video">Save</button>
+            <button id="download-video">Download</button>
             <button id="read-video">Read</button>
         </div>
     </div>
@@ -60,11 +59,12 @@
         const videoPlayerDiv = document.getElementById('video-player');
         const selectedVideo = document.getElementById('selected-video');
         const deleteVideoButton = document.getElementById('delete-video');
-        const saveVideoButton = document.getElementById('save-video');
         const readVideoButton = document.getElementById('read-video');
+        const downloadVideoButton = document.getElementById('download-video');
         let mediaRecorder;
         let recordedBlobs;
         let currentVideoUrl = '';
+        let currentVideoTimestamp = '';
 
         navigator.mediaDevices.getUserMedia({ video: true })
             .then(stream => {
@@ -82,7 +82,8 @@
             mediaRecorder.onstop = (event) => {
                 const blob = new Blob(recordedBlobs, { type: 'video/webm' });
                 const formData = new FormData();
-                const uniqueFilename = `video_${Date.now()}.webm`;
+                const current_time = new Date().toISOString().replace(/T/, '_').replace(/\..+/, '');
+                const uniqueFilename = `video_${current_time}.webm`;
                 formData.append('video', blob, uniqueFilename);
 
                 fetch("{% url 'save_video' %}", {
@@ -99,9 +100,15 @@
                           const videoLink = document.createElement('a');
                           videoLink.href = '#';
                           videoLink.textContent = videoName;
+                          videoLink.dataset.timestamp = data.timestamp;
                           videoLink.addEventListener('click', (e) => {
                               e.preventDefault();
-                              loadVideo(videoUrl);
+                              if (selectedVideo.src === videoUrl) {
+                                  videoPlayerDiv.style.display = 'none';
+                                  selectedVideo.src = '';
+                              } else {
+                                  loadVideo(videoUrl, data.timestamp);
+                              }
                           });
                           videoListDiv.appendChild(videoLink);
                           videoListDiv.appendChild(document.createElement('br'));
@@ -135,11 +142,17 @@
             }
         }
 
-        function loadVideo(url) {
-            currentVideoUrl = url;
-            selectedVideo.src = url;
-            videoPlayerDiv.style.display = 'block';
-            selectedVideo.play();
+        function loadVideo(url, timestamp) {
+            if (currentVideoUrl === url && videoPlayerDiv.style.display === 'block') {
+                videoPlayerDiv.style.display = 'none';
+                selectedVideo.src = '';
+            } else {
+                currentVideoUrl = url;
+                currentVideoTimestamp = timestamp;
+                selectedVideo.src = url;
+                videoPlayerDiv.style.display = 'block';
+                selectedVideo.play();
+            }
         }
 
         function deleteVideo(deleteUrl) {
@@ -170,14 +183,15 @@
                 .then(response => response.json())
                 .then(data => {
                     videoListDiv.innerHTML = '';
-                    data.videos.forEach(videoUrl => {
-                        const videoName = videoUrl.split('/').pop();
+                    data.videos.forEach(video => {
+                        const videoName = video.url.split('/').pop();
                         const videoLink = document.createElement('a');
                         videoLink.href = '#';
                         videoLink.textContent = videoName;
+                        videoLink.dataset.timestamp = video.timestamp;
                         videoLink.addEventListener('click', (e) => {
                             e.preventDefault();
-                            loadVideo(videoUrl);
+                            loadVideo(video.url, video.timestamp);
                         });
                         videoListDiv.appendChild(videoLink);
                         videoListDiv.appendChild(document.createElement('br'));
@@ -190,12 +204,15 @@
 
         toggleVideosButton.addEventListener('click', () => {
             toggleVisibility('video-list');
+            if (videoListDiv.style.display === 'none') {
+                videoPlayerDiv.style.display = 'none'; // Скрываем видеоплеер при закрытии списка видео
+            }
             if (videoListDiv.style.display === 'block') {
                 loadVideos();
             }
         });
 
-        saveVideoButton.addEventListener('click', () => {
+        downloadVideoButton.addEventListener('click', () => {
             if (currentVideoUrl) {
                 const a = document.createElement('a');
                 a.href = currentVideoUrl;
@@ -206,10 +223,7 @@
 
         readVideoButton.addEventListener('click', () => {
             if (currentVideoUrl) {
-                const videoName = currentVideoUrl.split('/').pop();
-                const timestamp = videoName.split('_')[1].split('.')[0];
-                const date = new Date(parseInt(timestamp));
-                alert('Video created on: ' + date.toLocaleString());
+                alert('Video created on: ' + currentVideoTimestamp);
             }
         });
 
